@@ -8,7 +8,7 @@ Send pageviews to TWIPLA (Beta: events and ecom not supported yet)
 ---
 
 ## Usage
-Install the tag template and add a new *TWIPLA* tag. Enter your Website ID. Per default, the tag sends a page view when loaded with * 1 * as *Platform* marker (which is similar to regular client-side tagging) and uses the `client_id` value that comes with every GA4 formatted incoming request. 
+Install the tag template and add a new *TWIPLA* tag. Enter your Website ID. Per default, the tag sends a page view when loaded with *1* as *Platform* marker (which is similar to regular client-side tagging) and uses the `client_id` value that comes with every GA4 formatted incoming request. 
 
 ### Advanced Settings
 This section contains additional options that allows enhanced data redaction. You can optionally send an empty referrer and delete any parameters from tracked urls. 
