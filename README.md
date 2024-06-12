@@ -19,12 +19,12 @@ If you want to collect data from several sources in different paths of the same 
 #### Define Client ID Source
 When the regular `client_id` from incoming requests is not suitable as a TWIPLA fingerprint replacement, define any other variable to populate the *fingerprint* value for the current visitor.
 
-### Event Data Mapping (not supported yet)
+### Event Data Mapping 
 Define event category, label and value for all events that are not a `page_view` and trigger this tag in order to fit the TWIPLA event structure (that is similar to former Universal Analytics or current Piwik PRO events). 
 
 NOTE: this feature is not functional yet. 
 
-### E-Commerce Events (not supported yet)
+### E-Commerce Events 
 When a standard GA4 ecom event triggers this tag, it will be sent as a TWIPLA ecom event and populates ecom reports there. If you prefer to just keep thise events as custom events in TWIPLA (without product information), use a transformation to change the event name for this tag. The following event names will be treated as ecom events: 
 
 - `add_payment_info` 
@@ -43,5 +43,3 @@ When a standard GA4 ecom event triggers this tag, it will be sent as a TWIPLA ec
 - `view_cart` 
 - `view_item` 
 - `view_item_list`   
-
-NOTE: this feature is not functional yet. 
