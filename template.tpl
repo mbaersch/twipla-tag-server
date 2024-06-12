@@ -231,6 +231,7 @@ ___SANDBOXED_JS_FOR_SERVER___
 
 const getAllEventData = require('getAllEventData');
 const sendHttpRequest = require('sendHttpRequest');
+const makeNumber = require('makeNumber');
 const JSON = require('JSON');
 const parseUrl = require('parseUrl');
 const getRequestHeader = require('getRequestHeader');
@@ -240,30 +241,10 @@ const logToConsole = require('logToConsole');
 
 const isLoggingEnabled = determinateIsLoggingEnabled();
 const traceId = getRequestHeader('trace-id');
-
-function twiplaItems(items) {
-  return items.map(prod => {
-     var prodObj = {};
-     prodObj.item_name = prod.name||prod.item_name;
-     prodObj.id = prod.id||prod.item_id;
-     prodObj.index = prod.index;
-     prodObj.price = prod.price||0;
-     prodObj.quantity = prod.quantity||1;
-     prodObj.affiliation = prod.affiliation;
-     prodObj.coupon = prod.coupon;
-     prodObj.discount = prod.discount;
-     prodObj.item_brand = prod.item_brand;
-     prodObj.item_variant = prod.item_variant;
-     prodObj.item_list_id = prod.item_list_id;
-     prodObj.item_list_name = prod.item_list_name;
-     prodObj.item_category = prod.item_category;
-     prodObj.item_category2 = prod.item_category2;
-     prodObj.item_category3 = prod.item_category3;
-     prodObj.item_category4 = prod.item_category4;
-     prodObj.item_category5 = prod.item_category5;
-     return prodObj;    
-  });
-}
+const eventData = getAllEventData();
+let track_url = eventData.page_location;
+let serviceUrl, twiplaEvent;
+const name = eventData.event_name || "";
 
 const ecomEvents = [
   "add_payment_info",
@@ -291,20 +272,54 @@ const itemlessEcom = [
   "sign_up",
 ];
 
-const eventData = getAllEventData();
-let track_url = eventData.page_location;
+/******************************************************/
+
+function determinateIsLoggingEnabled() {
+  const containerVersion = getContainerVersion();
+  const isDebug = !!(
+      containerVersion &&
+      (containerVersion.debugMode || containerVersion.previewMode)
+  );
+
+  if (!data.logType) return isDebug;
+  if (data.logType === 'no') return false;
+  if (data.logType === 'debug') return isDebug;
+  return data.logType === 'always';
+}
+
+function twiplaItems(items) {
+  return items.map(prod => {
+     var prodObj = {};
+     prodObj.item_name = prod.name||prod.item_name;
+     prodObj.id = prod.id||prod.item_id;
+     prodObj.index = prod.index;
+     prodObj.price = makeNumber(prod.price||0);
+     prodObj.quantity = makeNumber(prod.quantity||1);
+     prodObj.affiliation = prod.affiliation;
+     prodObj.coupon = prod.coupon;
+     prodObj.discount = prod.discount;
+     prodObj.item_brand = prod.item_brand;
+     prodObj.item_variant = prod.item_variant;
+     prodObj.item_list_id = prod.item_list_id;
+     prodObj.item_list_name = prod.item_list_name;
+     prodObj.item_category = prod.item_category;
+     prodObj.item_category2 = prod.item_category2;
+     prodObj.item_category3 = prod.item_category3;
+     prodObj.item_category4 = prod.item_category4;
+     prodObj.item_category5 = prod.item_category5;
+     return prodObj;    
+  });
+}
+
+/******************************************************/
 
 if (track_url) {
 
-  let serviceUrl, twiplaEvent;
-  const name = eventData.event_name || "";
   const ref = data.deleteReferrer === true ? "" : eventData.page_referrer || "";
   const isEcomEvent = ecomEvents.indexOf(name) >= 0; 
 
-  track_url = (data.setUrl === true) && data.setUrlVar ?
-      data.setUrlVar : track_url;
-  if (data.redactUrlParams === true)
-    track_url = track_url.split("?")[0];
+  track_url = (data.setUrl === true) && data.setUrlVar ? data.setUrlVar : track_url;
+  if (data.redactUrlParams === true) track_url = track_url.split("?")[0];
 
   let sr = (eventData.screen_resolution||"1280x1024").split("x");
   let idValue = data.setFingerprint !== "manual" ? eventData.client_id : data.setIDVar||"UNKNOWN";
@@ -317,8 +332,8 @@ if (track_url) {
       pageTitle: eventData.page_title,
       url: track_url,
       workerVersion: "1.0",
-      screenHeight: sr[1],
-      screenWidth: sr[0],
+      screenHeight: makeNumber(sr[1]),
+      screenWidth: makeNumber(sr[0]),
       visitorFingerprint: idValue,
     };
     
@@ -339,7 +354,7 @@ if (track_url) {
           phoneNumber: eventData.phone_number
         },
         currency: eventData.currency,
-        value: eventData.value,
+        value: makeNumber(eventData.value||0),
       }
     };
     
@@ -356,10 +371,10 @@ if (track_url) {
       websiteKey: data.websiteKey,
       action: eventData.event_name,
       category: data.category||"general",
-      label: data.label,
-      value: data.value,
-      type: "1",
+      type: 1,
     };
+    if (data.value) twiplaEvent.value = makeNumber(data.value);
+    if (data.label) twiplaEvent.label = data.label;
   }
 
   if (isLoggingEnabled) {
@@ -410,28 +425,6 @@ if (track_url) {
 
 } else
   data.gtmOnFailure();
-
-function determinateIsLoggingEnabled() {
-  const containerVersion = getContainerVersion();
-  const isDebug = !!(
-      containerVersion &&
-      (containerVersion.debugMode || containerVersion.previewMode)
-  );
-
-  if (!data.logType) {
-    return isDebug;
-  }
-
-  if (data.logType === 'no') {
-    return false;
-  }
-
-  if (data.logType === 'debug') {
-    return isDebug;
-  }
-
-  return data.logType === 'always';
-}
 
 
 ___SERVER_PERMISSIONS___
