@@ -2,5 +2,5 @@ homepage: "https://www.markus-baersch.de"
 documentation: "https://github.com/mbaersch/twipla-tag-server#readme"
 versions:
   # Latest version
-  - sha: 
+  - sha: ed78eb561beab5b2e52dcd5fa5f746caa70b94a0
     changeNotes: Initial release.
