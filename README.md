@@ -1,7 +1,7 @@
 # TWIPLA (Visitor Analytics) [UNOFFICIAL]
 **Custom Tag Template for server-side Google Tag Manager**
 
-Send pageviews to TWIPLA (Beta: events and ecom not supported yet) 
+Send pageviews, ecom events and custom events to TWIPLA 
 
 [![Template Status](https://img.shields.io/badge/Community%20Template%20Gallery%20Status-beta-orange)](https://tagmanager.google.com/gallery/#/owners/mbaersch/templates/twipla-tag-server) ![Repo Size](https://img.shields.io/github/repo-size/mbaersch/twipla-tag-server) ![License](https://img.shields.io/github/license/mbaersch/twipla-tag-server)
     
